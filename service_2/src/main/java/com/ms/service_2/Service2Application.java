@@ -20,8 +20,8 @@ public class Service2Application {
 @RestController
 class Service1Controller{
 
-	@GetMapping()
+	@GetMapping("/hello")
 	public String hello(){
-		return "hello from 2";
+		return "hello from 2 - invoked by service2";
 	}
 }
