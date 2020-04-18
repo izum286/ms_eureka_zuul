@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -26,6 +27,7 @@ public class NotificationServiceImpl implements NotificationService {
     LoggerRepo repo;
 
     @Override
+    @Async
     public void sendMessage(Message message) throws MessagingException {
         MimeMessage msg = sender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(msg, true);
@@ -38,5 +40,13 @@ public class NotificationServiceImpl implements NotificationService {
         LoggerInfo info = new LoggerInfo(message.getType().toString() +
                 " notification was sent to "+message.getRecepients() + " at "+LocalDateTime.now());
         repo.save(info);
+    }
+
+    private void sendEmail(Message message){
+
+    }
+
+    private void sendTelegram(Message message) {
+
     }
 }
