@@ -16,7 +16,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="gateway_zuul" target="1.8" />
-      <module name="notification_service" target="1.8" />
+      <module name="notification_service" target="9" />
       <module name="server_eureka" target="1.8" />
       <module name="service_1" target="1.8" />
       <module name="service_2" target="1.8" />
