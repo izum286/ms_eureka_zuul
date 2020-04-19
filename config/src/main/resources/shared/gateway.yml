@@ -1,0 +1,26 @@
+server:
+  port: 8080
+#
+#spring:
+#  application:
+#    name: gateway
+
+eureka:
+  instance:
+    prefer-ip-address: true
+    client:
+      serviceUrl:
+        defaultZone: http://localhost:8761/eureka
+
+ribbon:
+   ConnectTimeout: 10000
+   ReadTimeout: 10000
+
+zuul:
+  host:
+    socket-timeout-millis: 20000
+    connect-timeout-millis: 20000
+  routes:
+    notification_service:
+      path: /notification/**
+      serviceId: notification
