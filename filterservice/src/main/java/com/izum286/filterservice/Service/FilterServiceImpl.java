@@ -11,6 +11,7 @@ import com.izum286.filterservice.Models.FilterNodeEntity;
 import com.izum286.filterservice.Repo.FilterRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.naming.ServiceUnavailableException;
@@ -33,8 +34,12 @@ public class FilterServiceImpl implements FilterService {
      * @author izum286
      */
     @Override
+    @Async
     public void addFilter(AddUpdateCarDtoRequest addUpdateCarDtoRequest) {
         addNode(map(addUpdateCarDtoRequest));
+        //todo email or telegram confirmation
+        System.out.println("new filter added");
+
     }
 
     /**

@@ -5,6 +5,7 @@ import com.izum286.filterservice.Models.AddUpdateCarDtoRequest;
 import com.izum286.filterservice.Service.FilterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,7 +15,7 @@ public class FilterController {
     @Autowired
     FilterService filterService;
 
-
+    @KafkaListener(topics = "add_filter")
     @GetMapping()
     public void addFilter (AddUpdateCarDtoRequest addUpdateCarDtoRequest){
         filterService.addFilter(addUpdateCarDtoRequest);
