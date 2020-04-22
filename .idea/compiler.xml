@@ -7,6 +7,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="filterservice" />
         <module name="server_eureka" />
         <module name="config" />
         <module name="gateway_zuul" />
@@ -17,6 +18,7 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="config" target="1.8" />
+      <module name="filterservice" target="11" />
       <module name="gateway_zuul" target="1.8" />
       <module name="notification_service" target="9" />
       <module name="server_eureka" target="1.8" />
@@ -27,6 +29,7 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="config" options="-parameters" />
+      <module name="filterservice" options="-parameters" />
       <module name="gateway_zuul" options="-parameters" />
       <module name="notification_service" options="-parameters" />
       <module name="server_eureka" options="-parameters" />
