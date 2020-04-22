@@ -16,7 +16,7 @@ public class FilterController {
     FilterService filterService;
 
     @KafkaListener(topics = "add_filter")
-    @GetMapping()
+    @GetMapping("/add")
     public void addFilter (AddUpdateCarDtoRequest addUpdateCarDtoRequest){
         filterService.addFilter(addUpdateCarDtoRequest);
     }
