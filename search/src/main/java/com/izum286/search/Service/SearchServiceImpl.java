@@ -1,6 +1,7 @@
 package com.izum286.search.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.izum286.search.Client.FilterServiceClient;
 import com.izum286.search.Exceptions.NotFoundServiceException;
 import com.izum286.search.Exceptions.ServiceException;
 import com.izum286.search.Mapper.CarMapper;
@@ -32,6 +33,10 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     DiscoveryClient discoveryClient;
 
+    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
+    @Autowired
+    FilterServiceClient filterServiceClient;
+
     public URI getEndpointForOtherService(String serviceId, String endpointName) throws ServiceUnavailableException {
         Optional<URI> serviceUri = discoveryClient.getInstances(serviceId)
                 .stream()
@@ -42,9 +47,10 @@ public class SearchServiceImpl implements SearchService {
     }
 
     public String getFilterForResponses() throws ServiceUnavailableException {
-        RestTemplate restTemplate = new RestTemplate();
-        URI filterServiceEndpoint = getEndpointForOtherService("filter", "/get");
-        return restTemplate.getForEntity(filterServiceEndpoint, String.class).getBody();
+//        RestTemplate restTemplate = new RestTemplate();
+//        URI filterServiceEndpoint = getEndpointForOtherService("filter", "/get");
+//        return restTemplate.getForEntity(filterServiceEndpoint, String.class).getBody();
+        return filterServiceClient.getFilters();
 
     }
 
