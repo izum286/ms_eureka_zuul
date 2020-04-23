@@ -12,3 +12,11 @@ spring:
   data:
     mongodb:
       uri: mongodb+srv://admin:12345.com@cluster0-milu6.mongodb.net/icarro?retryWrites=true&w=majority
+
+  kafka:
+    consumer:
+      bootstrap-servers: localhost:9092
+      group-id: group_id
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
