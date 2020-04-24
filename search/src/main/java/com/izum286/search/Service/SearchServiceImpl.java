@@ -1,60 +1,50 @@
 package com.izum286.search.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.izum286.search.Client.FilterServiceClient;
 import com.izum286.search.Exceptions.NotFoundServiceException;
-import com.izum286.search.Exceptions.ServiceException;
 import com.izum286.search.Mapper.CarMapper;
-import com.izum286.search.Models.*;
-
+import com.izum286.search.Models.FilterDTO;
+import com.izum286.search.Models.FullCarDTOResponse;
+import com.izum286.search.Models.FullCarEntity;
 import com.izum286.search.Models.SearchResponse;
 import com.izum286.search.repository.SearchRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.geo.Circle;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.naming.ServiceUnavailableException;
-import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("Convert2MethodRef")
 @Service
 public class SearchServiceImpl implements SearchService {
 
-    @Autowired
-    DiscoveryClient discoveryClient;
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     FilterServiceClient filterServiceClient;
-    //TODO
 
     @Autowired
     SearchRepository searchRepository;
 
 
 
-    public URI getEndpointForOtherService(String serviceId, String endpointName) throws ServiceUnavailableException {
-        Optional<URI> serviceUri = discoveryClient.getInstances(serviceId)
-                .stream()
-                .map(service->service.getUri())
-                .findFirst();
-        URI endpoint = serviceUri.map(s -> s.resolve(endpointName)).orElseThrow(ServiceUnavailableException::new);
-        return endpoint;
-    }
+//    public URI getEndpointForOtherService(String serviceId, String endpointName) throws ServiceUnavailableException {
+//        Optional<URI> serviceUri = discoveryClient.getInstances(serviceId)
+//                .stream()
+//                .map(service->service.getUri())
+//                .findFirst();
+//        URI endpoint = serviceUri.map(s -> s.resolve(endpointName)).orElseThrow(ServiceUnavailableException::new);
+//        return endpoint;
+//    }
 
     public String getFilterForResponses() throws ServiceUnavailableException {
 //        RestTemplate restTemplate = new RestTemplate();
