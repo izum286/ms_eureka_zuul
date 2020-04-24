@@ -8,12 +8,15 @@ import com.izum286.search.Mapper.CarMapper;
 import com.izum286.search.Models.*;
 
 import com.izum286.search.Models.SearchResponse;
+import com.izum286.search.repository.SearchRepository;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.geo.Circle;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -37,6 +40,10 @@ public class SearchServiceImpl implements SearchService {
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
     @Autowired
     FilterServiceClient filterServiceClient;
+    //TODO
+
+    @Autowired
+    SearchRepository searchRepository;
 
 
 
@@ -65,29 +72,12 @@ public class SearchServiceImpl implements SearchService {
         Double rad = radius;
         double maxRad = rad+1500;
         Page<FullCarEntity> cars = new PageImpl<>(new ArrayList<>(), Pageable.unpaged(),0);
-        //todo need to add this endpoint in carservice
-        //при реализации карсервиса надо сделать новый эндпойнт - тк его раньше не были и лазили напрямую в кар репо
-        //теперь будем обращаться к кар контроллеру и в нем придется прописать кучу новых конечных точек
-        URI carserviceEndPoint = getEndpointForOtherService("car", "/cityDatesPriceSortByPrice");
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUri(carserviceEndPoint)
-                .queryParam("latitude", latitude)
-                .queryParam("longitude", longitude)
-                .queryParam("radius", radius)
-                .queryParam("start_date", dateFrom)
-                .queryParam("end_date", dateTo)
-                .queryParam("min_amount", minPrice)
-                .queryParam("max_amount", maxPrice)
-                .queryParam("ascending", sort)
-                .queryParam("items_on_page", itemsOnPage)
-                .queryParam("current_page", currentPage);
 
-        RestTemplate restTemplate = new RestTemplate();
         while ((cars.getTotalElements() == 0) & (rad<=maxRad)) {
             try {
-                cars = restTemplate.getForObject(builder.toUriString(), Page.class);
-//                cars = carRepository
-//                        .cityDatesPriceSortByPrice(latitude, longitude, rad, dateFrom, dateTo, minPrice, maxPrice,
-//                                PageRequest.of(currentPage, itemsOnPage), sort);
+                cars = searchRepository
+                        .cityDatesPriceSortByPrice(latitude, longitude, rad, dateFrom, dateTo, minPrice, maxPrice,
+                                PageRequest.of(currentPage, itemsOnPage), sort);
             } catch (Throwable t) {
                 throw new ServiceUnavailableException("Something went wrong");
             }
@@ -110,27 +100,20 @@ public class SearchServiceImpl implements SearchService {
         Double rad = Double.valueOf(radius);
         double maxRad = rad+1500;
         Page<FullCarEntity> cars = new PageImpl<>(new ArrayList<>(), Pageable.unpaged(),0);
-        URI carserviceEndPoint = getEndpointForOtherService("car", "/findAllByPickUpPlaceWithin");
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUri(carserviceEndPoint)
-                .queryParam("latitude", latt)
-                .queryParam("longitude", longt)
-                .queryParam("radius", radius)
-                .queryParam("items_on_page", itemsOnPage)
-                .queryParam("current_page", currentPage);
-        RestTemplate restTemplate =new RestTemplate();
+
         while ((cars.getTotalElements() == 0) & (rad<=maxRad)) {
             try {
-                  cars = restTemplate.getForObject(builder.toUriString(), Page.class);
-//                cars = carRepository
-//                        .findAllByPickUpPlaceWithin(
-//                                new Circle(Double.parseDouble(latitude), Double.parseDouble(longitude), rad),
-//                                PageRequest.of(currentPage, itemsOnPage));
+
+                cars = searchRepository
+                        .findAllByPickUpPlaceWithin(
+                                new Circle(Double.parseDouble(latt), Double.parseDouble(longt), rad),
+                                PageRequest.of(currentPage, itemsOnPage));
             } catch (Throwable e) {
                 throw new ServiceUnavailableException("Something went wrong");
             }
             rad+=500;
         }
-        if (cars.getTotalElements() == 0) throw new NotFoundServiceException("No such Cars according to search request");
+        if (cars.getTotalElements() == 0) throw new RuntimeException("No such Cars according to search request");
         SearchResponse res = new SearchResponse();
         List<FullCarDTOResponse> carDTOResponses = cars
                 .getContent().stream()
@@ -148,20 +131,14 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public SearchResponse byFilter(FilterDTO filter, int itemsOnPage, int currentPage) {
         currentPage = (currentPage <= 0) ? 1: currentPage;
-        RestTemplate restTemplate = new RestTemplate();
         Page<FullCarEntity> cars = new PageImpl<>(new ArrayList<>(), Pageable.unpaged(),0);
-        URI carserviceEndPoint = getEndpointForOtherService("car", "/byFilter");
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUri(carserviceEndPoint)
-                .queryParams(new ObjectMapper().convertValue(filter, LinkedMultiValueMap.class))
-                .queryParam("items_on_page", itemsOnPage)
-                .queryParam("current_page", currentPage);
         try {
-            cars = restTemplate.getForObject(builder.toUriString(), Page.class);
-//            cars  = carRepository
-//                    .byFilter(filter, PageRequest.of(currentPage,itemsOnPage));
+
+            cars  = searchRepository
+                    .byFilter(filter, PageRequest.of(currentPage,itemsOnPage));
 
         } catch (Throwable t) {
-            throw new NotFoundServiceException("Something went wrong");
+            throw new RuntimeException("Something went wrong");
         }
         if (cars.getTotalElements() == 0) throw new NotFoundServiceException("No such Cars according to search request");
         SearchResponse res = new SearchResponse();
@@ -184,35 +161,19 @@ public class SearchServiceImpl implements SearchService {
         currentPage = (currentPage <= 0) ? 1: currentPage;
         Double rad = Double.valueOf(radius);
         double maxRad = rad+1500;
-        RestTemplate restTemplate = new RestTemplate();
         Page<FullCarEntity> cars = new PageImpl<>(new ArrayList<>(), Pageable.unpaged(),0);
-        URI carserviceEndPoint = getEndpointForOtherService("car", "/searchAllSortByPrice");
-        UriComponentsBuilder builder = UriComponentsBuilder.fromUri(carserviceEndPoint)
-                .queryParam("items_on_page", itemsOnPage)
-                .queryParam("current_page", currentPage)
-                .queryParams(new ObjectMapper().convertValue(filter, LinkedMultiValueMap.class))
-                .queryParam("latitude", latt)
-                .queryParam("longitude", longt)
-                .queryParam("radius", radius)
-                .queryParam("start_date", dateFrom)
-                .queryParam("end_date", dateTo)
-                .queryParam("min_amount", minPrice)
-                .queryParam("max_amount", maxPrice)
-                .queryParam("ascending", sort)
-                ;
         while ((cars.getTotalElements()==0) & (rad<=maxRad)) {
             try {
-                cars = restTemplate.getForObject(builder.toUriString(), Page.class);
-//                cars = carRepository
-//                        .searchAllSortByPrice(itemsOnPage, currentPage, filter, latt, longt, rad.toString(),  dateFrom, dateTo, minPrice, maxPrice,
-//                                PageRequest.of(currentPage, itemsOnPage), sort);
+                cars = searchRepository
+                        .searchAllSortByPrice(itemsOnPage, currentPage, filter, latt, longt, rad.toString(),  dateFrom, dateTo, minPrice, maxPrice,
+                                PageRequest.of(currentPage, itemsOnPage), sort);
             } catch (Throwable e) {
-                throw new ServiceException("Something went wrong");
+                throw new RuntimeException("Something went wrong");
             }
             rad+=500;
         }
         if (cars.getTotalElements() == 0)
-            throw new NotFoundServiceException("No such Cars according to search request");
+            throw new RuntimeException("No such Cars according to search request");
         SearchResponse res = new SearchResponse();
         List<FullCarDTOResponse> carDTOResponses = cars
                 .getContent().stream()
