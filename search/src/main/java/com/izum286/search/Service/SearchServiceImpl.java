@@ -38,6 +38,8 @@ public class SearchServiceImpl implements SearchService {
     @Autowired
     FilterServiceClient filterServiceClient;
 
+
+
     public URI getEndpointForOtherService(String serviceId, String endpointName) throws ServiceUnavailableException {
         Optional<URI> serviceUri = discoveryClient.getInstances(serviceId)
                 .stream()
