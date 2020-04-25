@@ -80,6 +80,12 @@ public class SearchController {
                 .byFilter(filter, itemsOnPage, currentPage);
     }
 
+    @GetMapping("/test")
+    public String test(){
+        System.out.println("test");
+        return searchService.getFilterForResponses();
+    }
+
 
     /**
      *

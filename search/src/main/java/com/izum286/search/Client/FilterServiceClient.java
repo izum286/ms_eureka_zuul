@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @FeignClient(name = "filterservice", fallback = FilterServiceClientFallBack.class)
 public interface FilterServiceClient {
-    @RequestMapping(value = "filterservice/get", method = RequestMethod.GET,
+    @RequestMapping(value = "/get", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public String getFilters();
 }

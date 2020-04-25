@@ -45,8 +45,8 @@ public class SearchServiceImpl implements SearchService {
 //        URI endpoint = serviceUri.map(s -> s.resolve(endpointName)).orElseThrow(ServiceUnavailableException::new);
 //        return endpoint;
 //    }
-
-    public String getFilterForResponses() throws ServiceUnavailableException {
+    @Override
+    public String getFilterForResponses()  {
 //        RestTemplate restTemplate = new RestTemplate();
 //        URI filterServiceEndpoint = getEndpointForOtherService("filter", "/get");
 //        return restTemplate.getForEntity(filterServiceEndpoint, String.class).getBody();

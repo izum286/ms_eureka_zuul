@@ -7,6 +7,8 @@ import javax.naming.ServiceUnavailableException;
 import java.time.LocalDateTime;
 
 public interface SearchService {
+
+    public String getFilterForResponses(); //for test
     SearchResponse cityDatesPriceSortByPrice(String latitude, String longitude, double radius,
                                              LocalDateTime dateFrom,
                                              LocalDateTime dateTo,
