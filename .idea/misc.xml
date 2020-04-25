@@ -15,6 +15,7 @@
         <option value="$PROJECT_DIR$/config/pom.xml" />
         <option value="$PROJECT_DIR$/filterservice/pom.xml" />
         <option value="$PROJECT_DIR$/search/pom.xml" />
+        <option value="$PROJECT_DIR$/carservice/pom.xml" />
       </list>
     </option>
   </component>

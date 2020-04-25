@@ -9,15 +9,17 @@
         <outputRelativeToContentRoot value="true" />
         <module name="filterservice" />
         <module name="search" />
+        <module name="carservice" />
         <module name="server_eureka" />
-        <module name="notification_service" />
+        <module name="config" />
         <module name="gateway_zuul" />
         <module name="service_2" />
         <module name="service_1" />
-        <module name="config" />
+        <module name="notification_service" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="carservice" target="1.8" />
       <module name="config" target="1.8" />
       <module name="filterservice" target="11" />
       <module name="gateway_zuul" target="1.8" />
@@ -30,6 +32,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="carservice" options="-parameters" />
       <module name="config" options="-parameters" />
       <module name="filterservice" options="-parameters" />
       <module name="gateway_zuul" options="-parameters" />

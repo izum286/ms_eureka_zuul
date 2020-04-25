@@ -10,6 +10,6 @@ public class FilterServiceClientFallBack implements FilterServiceClient {
     @Override
     public String getFilters() {
         LOGGER.error("Error during invocation of filter service ");
-        return "Filter entity not provided... Something terrible happened";
+        return "Filter entity not provided... Something terrible happened with filterservice connection";
     }
 }
