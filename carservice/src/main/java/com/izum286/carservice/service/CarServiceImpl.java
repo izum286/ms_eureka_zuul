@@ -3,12 +3,14 @@ package com.izum286.carservice.service;
 import com.izum286.carservice.Mapper.BookedPeriodMapper;
 import com.izum286.carservice.Mapper.CarMapper;
 import com.izum286.carservice.Mapper.OwnerMapper;
+import com.izum286.carservice.annotaion.CheckForNull;
 import com.izum286.carservice.exceptions.NotFoundServiceException;
 import com.izum286.carservice.model.dto.*;
 import com.izum286.carservice.model.entity.BookedPeriodEntity;
 import com.izum286.carservice.model.entity.FullCarEntity;
 import com.izum286.carservice.model.entity.OwnerEntity;
 import com.izum286.carservice.model.entity.UserEntity;
+import com.izum286.carservice.repository.BookedPeriodsRepository;
 import com.izum286.carservice.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,6 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-/**
- * @author Aleks Gor
- * @author izum286
- * @author Vitalii Adler
- */
 @Service
 public class CarServiceImpl implements CarService {
 
@@ -28,13 +25,16 @@ public class CarServiceImpl implements CarService {
     CarRepository carRepository;
 
     @Autowired
+    BookedPeriodsRepository bookedPeriodsRepository;
+
+
+    @Autowired
     UserEntityRepository userRepository;
 
     @Autowired
     UserService userService;
 
-    @Autowired
-    BookedPeriodsRepository bookedPeriodsRepository;
+
 
 
     /**
@@ -200,7 +200,7 @@ public class CarServiceImpl implements CarService {
     /**
      * status - ready
      * code cleanup by izum286
-     *
+     * убрать этот метод и выделить его в отдельный микросервис
      * @return BookResponseDTO
      */
     @Override
