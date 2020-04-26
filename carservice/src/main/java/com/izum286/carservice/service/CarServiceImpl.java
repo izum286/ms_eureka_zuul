@@ -9,6 +9,7 @@ import com.izum286.carservice.model.entity.BookedPeriodEntity;
 import com.izum286.carservice.model.entity.FullCarEntity;
 import com.izum286.carservice.model.entity.OwnerEntity;
 import com.izum286.carservice.model.entity.UserEntity;
+import com.izum286.carservice.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
