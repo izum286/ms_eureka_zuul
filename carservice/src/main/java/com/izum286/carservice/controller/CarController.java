@@ -1,6 +1,7 @@
 package com.izum286.carservice.controller;
 
 import com.izum286.carservice.model.dto.*;
+import com.izum286.carservice.service.CarService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +17,6 @@ public class CarController {
     CarService carService;
 
     @Autowired
-    FilterService filterService;
-
-    @Autowired
     UserService userService;
 
 
@@ -27,7 +25,7 @@ public class CarController {
     @PostMapping("car")
     public FullCarDTOResponse addCar(@RequestBody AddUpdateCarDtoRequest carDTO, Principal principal) {
         String userEmail = principal.getName();
-        filterService.addFilter(carDTO);
+        //filterService.addFilter(carDTO); remove to service -> into addCar method throw FilterClient invocation
         return carService.addCar(carDTO, userEmail).orElseThrow(() -> new RuntimeException(String.format("Car %s already exist", carDTO.getSerialNumber())));
     }
 
@@ -38,7 +36,7 @@ public class CarController {
     public FullCarDTOResponse updateCar(@RequestParam("serial_number") String serial_number, @RequestBody AddUpdateCarDtoRequest carDTO, Principal principal) {
         //TODO check serial inside dto and serial_number or ->
         carDTO.setSerialNumber(serial_number);
-        filterService.addFilter(carDTO);
+        //filterService.addFilter(carDTO); remove to service -> into addCar method throw FilterClient invocation
         String userEmail = principal.getName();
         //TODO add correct exception
         return carService.updateCar(carDTO, userEmail).orElseThrow();

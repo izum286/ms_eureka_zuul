@@ -21,12 +21,6 @@ public class SearchController {
     SearchService searchService;
 
 
-    /**
-     *
-     * @author izum286
-     * status READY
-     */
-
     @GetMapping()
     public SearchResponse cityDatesPriceSortByPrice(@RequestParam(name = "latitude") String latitude,
                                                     @RequestParam(name = "longitude") String longitude,

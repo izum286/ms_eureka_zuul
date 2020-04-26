@@ -1,16 +1,14 @@
 package com.izum286.carservice.service;
 
-import com.telran.ilcarro.annotaion.CheckForNull;
-import com.telran.ilcarro.model.car.*;
-import com.telran.ilcarro.repository.BookedPeriodsRepository;
-import com.telran.ilcarro.repository.CarRepository;
-import com.telran.ilcarro.repository.UserEntityRepository;
-import com.telran.ilcarro.repository.entity.*;
-import com.telran.ilcarro.service.exceptions.NotFoundServiceException;
-import com.telran.ilcarro.service.mapper.BookedPeriodMapper;
-import com.telran.ilcarro.service.mapper.CarMapper;
-import com.telran.ilcarro.service.mapper.OwnerMapper;
-import com.telran.ilcarro.service.user.UserService;
+import com.izum286.carservice.Mapper.BookedPeriodMapper;
+import com.izum286.carservice.Mapper.CarMapper;
+import com.izum286.carservice.Mapper.OwnerMapper;
+import com.izum286.carservice.exceptions.NotFoundServiceException;
+import com.izum286.carservice.model.dto.*;
+import com.izum286.carservice.model.entity.BookedPeriodEntity;
+import com.izum286.carservice.model.entity.FullCarEntity;
+import com.izum286.carservice.model.entity.OwnerEntity;
+import com.izum286.carservice.model.entity.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +21,7 @@ import java.util.stream.Collectors;
  * @author Vitalii Adler
  */
 @Service
-public class CarServiceImpl implements com.telran.ilcarro.service.car.CarService {
+public class CarServiceImpl implements CarService {
 
     @Autowired
     CarRepository carRepository;
@@ -53,7 +51,7 @@ public class CarServiceImpl implements com.telran.ilcarro.service.car.CarService
         );
         OwnerEntity owner = OwnerMapper.INSTANCE.map(user);
         entity.setOwner(owner);
-        entity.setStatistics(new CarStatEntity(0, 0));
+        entity.setStatistics(new CarStatDto(0, 0));
         //Add car serialNumber to user profile
         FullCarEntity added = carRepository.save(entity);
         userService.addUserCar(userEmail, carToAdd.getSerialNumber());
@@ -228,9 +226,9 @@ public class CarServiceImpl implements com.telran.ilcarro.service.car.CarService
         userHistoryBookedEntity.add(newPeriod);
         userWhoBooked.setHistory(userHistoryBookedEntity);
         //Set stats
-        CarStatEntity currStat = carToBookEntity.getStatistics();
+        CarStatDto currStat = carToBookEntity.getStatistics();
         if (currStat == null) {
-            currStat = new CarStatEntity(0, 0);
+            currStat = new CarStatDto(0, 0);
         }
         currStat.setTrips(currStat.getTrips() + 1);
         //TODO random Stats raiting
