@@ -35,7 +35,7 @@ public class UserEntity {
     private LocalDateTime registrationDate;
     private String photo;
     private List<CommentEntity> comments;
-    private List<String> ownCars;
+    private List<String> ownCars; //List of carNumbers
     private List<BookedPeriodEntity> history;
     private List<BookedPeriodEntity> bookedCars;
 

@@ -1,15 +1,13 @@
 package com.izum286.carservice.service;
 
+import com.izum286.carservice.Client.UserServiceClient;
 import com.izum286.carservice.Mapper.BookedPeriodMapper;
 import com.izum286.carservice.Mapper.CarMapper;
 import com.izum286.carservice.Mapper.OwnerMapper;
 import com.izum286.carservice.annotaion.CheckForNull;
 import com.izum286.carservice.exceptions.NotFoundServiceException;
 import com.izum286.carservice.model.dto.*;
-import com.izum286.carservice.model.entity.BookedPeriodEntity;
-import com.izum286.carservice.model.entity.FullCarEntity;
-import com.izum286.carservice.model.entity.OwnerEntity;
-import com.izum286.carservice.model.entity.UserEntity;
+import com.izum286.carservice.model.entity.*;
 import com.izum286.carservice.repository.BookedPeriodsRepository;
 import com.izum286.carservice.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +25,12 @@ public class CarServiceImpl implements CarService {
     @Autowired
     BookedPeriodsRepository bookedPeriodsRepository;
 
+//
+//    @Autowired
+//    UserEntityRepository userRepository;
 
     @Autowired
-    UserEntityRepository userRepository;
-
-    @Autowired
-    UserService userService;
+    UserServiceClient userServiceClient;
 
 
 
@@ -47,12 +45,13 @@ public class CarServiceImpl implements CarService {
     @CheckForNull
     public Optional<FullCarDTOResponse> addCar(AddUpdateCarDtoRequest carToAdd, String userEmail) {
         FullCarEntity entity = CarMapper.INSTANCE.map(carToAdd);
-        UserEntity user = userRepository.findById(userEmail).orElseThrow(
+        UserEntity user = userServiceClient.findById(userEmail).orElseThrow(
                 () -> new NotFoundServiceException(String.format("User %s not found", userEmail))
         );
+
         OwnerEntity owner = OwnerMapper.INSTANCE.map(user);
         entity.setOwner(owner);
-        entity.setStatistics(new CarStatDto(0, 0));
+        entity.setStatistics(new CarStatEntity(0, 0));
         //Add car serialNumber to user profile
         FullCarEntity added = carRepository.save(entity);
         userService.addUserCar(userEmail, carToAdd.getSerialNumber());
@@ -69,7 +68,7 @@ public class CarServiceImpl implements CarService {
     @Override
     @CheckForNull
     public Optional<FullCarDTOResponse> updateCar(AddUpdateCarDtoRequest carToUpdate, String userEmail) {
-        if (!userRepository.findById(userEmail)
+        if (!userServiceClient.findById(userEmail)
                 .orElseThrow(() -> new NotFoundServiceException(String.format("User profile %s not found", userEmail))).getOwnCars()
                 .contains(carToUpdate.getSerialNumber())) {
             throw new NotFoundServiceException("no such car owned by user");
@@ -92,7 +91,7 @@ public class CarServiceImpl implements CarService {
     @Override
     @CheckForNull
     public boolean deleteCar(String carId, String userEmail) {
-        if (!userRepository.findById(userEmail).orElseThrow(
+        if (!userServiceClient.findById(userEmail).orElseThrow(
                 () -> new NotFoundServiceException(String.format("User profile %s not found", userEmail))
         ).getOwnCars()
                 .contains(carId)) {
@@ -156,7 +155,7 @@ public class CarServiceImpl implements CarService {
     @Override
     @CheckForNull
     public List<FullCarDTOResponse> ownerGetCars(String userEmail) {
-        List<String> ownerCars = userRepository.findById(userEmail).orElseThrow(
+        List<String> ownerCars = userServiceClient.findById(userEmail).orElseThrow(
                 () -> new NotFoundServiceException(String.format("User %s not found", userEmail))
         ).getOwnCars();
         if (ownerCars == null || ownerCars.isEmpty()) {
@@ -180,7 +179,7 @@ public class CarServiceImpl implements CarService {
     @Override
     @CheckForNull
     public List<BookedPeriodDto> getBookedPeriodsByCarId(String carId, String userEmail) {
-        if (!userRepository.findById(userEmail).orElseThrow(
+        if (!userServiceClient.findById(userEmail).orElseThrow(
                 () -> new NotFoundServiceException(String.format("User %s not found", userEmail))
         ).getOwnCars()
                 .contains(carId)) {
@@ -206,39 +205,40 @@ public class CarServiceImpl implements CarService {
     @Override
     @CheckForNull
     public Optional<BookResponseDTO> makeReservation(String carId, BookRequestDTO dto, String userEmail) {
-        //TODO CarStatistics ??? To Rodion add to protocol rating
-        FullCarEntity carToBookEntity = carRepository.findById(carId).orElseThrow(
-                () -> new NotFoundServiceException(String.format("Car %s not found in carRepo", carId))
-        );
-        UserEntity userWhoBooked = userRepository.findById(userEmail).orElseThrow(
-                () -> new NotFoundServiceException(String.format("User %s not found", userEmail))
-        );
-        List<BookedPeriodEntity> carListBookedPeriodEntity =
-                carToBookEntity.getBookedPeriods() == null ? new ArrayList<>() : carToBookEntity.getBookedPeriods();
-        List<BookedPeriodEntity> userHistoryBookedEntity =
-                userWhoBooked.getHistory() == null ? new ArrayList<>() : userWhoBooked.getHistory();
-
-        BookedPeriodEntity newPeriod = BookedPeriodMapper.INSTANCE.map(dto);
-        newPeriod.setCarId(carId);
-        //TODO check amount logic, PricePErDaySimpl - null
-        newPeriod.setAmount(carToBookEntity.getPricePerDay().getValue());
-        carListBookedPeriodEntity.add(newPeriod);
-        carToBookEntity.setBookedPeriods(carListBookedPeriodEntity);
-        userHistoryBookedEntity.add(newPeriod);
-        userWhoBooked.setHistory(userHistoryBookedEntity);
-        //Set stats
-        CarStatDto currStat = carToBookEntity.getStatistics();
-        if (currStat == null) {
-            currStat = new CarStatDto(0, 0);
-        }
-        currStat.setTrips(currStat.getTrips() + 1);
-        //TODO random Stats raiting
-        currStat.setRating((Math.random() * 5 + 1));
-        carToBookEntity.setStatistics(currStat);
-        carRepository.save(carToBookEntity);
-        userRepository.save(userWhoBooked);
-        BookResponseDTO responseDto = BookedPeriodMapper.INSTANCE.mapToResponse(newPeriod);
-        return Optional.of(responseDto);
+//        //TODO CarStatistics ??? To Rodion add to protocol rating
+//        FullCarEntity carToBookEntity = carRepository.findById(carId).orElseThrow(
+//                () -> new NotFoundServiceException(String.format("Car %s not found in carRepo", carId))
+//        );
+//        UserEntity userWhoBooked = userRepository.findById(userEmail).orElseThrow(
+//                () -> new NotFoundServiceException(String.format("User %s not found", userEmail))
+//        );
+//        List<BookedPeriodEntity> carListBookedPeriodEntity =
+//                carToBookEntity.getBookedPeriods() == null ? new ArrayList<>() : carToBookEntity.getBookedPeriods();
+//        List<BookedPeriodEntity> userHistoryBookedEntity =
+//                userWhoBooked.getHistory() == null ? new ArrayList<>() : userWhoBooked.getHistory();
+//
+//        BookedPeriodEntity newPeriod = BookedPeriodMapper.INSTANCE.map(dto);
+//        newPeriod.setCarId(carId);
+//        //TODO check amount logic, PricePErDaySimpl - null
+//        newPeriod.setAmount(carToBookEntity.getPricePerDay().getValue());
+//        carListBookedPeriodEntity.add(newPeriod);
+//        carToBookEntity.setBookedPeriods(carListBookedPeriodEntity);
+//        userHistoryBookedEntity.add(newPeriod);
+//        userWhoBooked.setHistory(userHistoryBookedEntity);
+//        //Set stats
+//        CarStatEntity currStat = carToBookEntity.getStatistics();
+//        if (currStat == null) {
+//            currStat = new CarStatEntity(0, 0);
+//        }
+//        currStat.setTrips(currStat.getTrips() + 1);
+//        //TODO random Stats raiting
+//        currStat.setRating((Math.random() * 5 + 1));
+//        carToBookEntity.setStatistics(currStat);
+//        carRepository.save(carToBookEntity);
+//        userRepository.save(userWhoBooked);
+//        BookResponseDTO responseDto = BookedPeriodMapper.INSTANCE.mapToResponse(newPeriod);
+//        return Optional.of(responseDto);
+        return Optional.empty();
     }
 
     /**
