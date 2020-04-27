@@ -11,6 +11,7 @@ import com.izum286.carservice.model.entity.*;
 import com.izum286.carservice.repository.BookedPeriodsRepository;
 import com.izum286.carservice.repository.CarRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -31,6 +32,9 @@ public class CarServiceImpl implements CarService {
 
     @Autowired
     UserServiceClient userServiceClient;
+
+    @Autowired
+    private KafkaTemplate<String, String> kafkaTemplate;
 
 
 
