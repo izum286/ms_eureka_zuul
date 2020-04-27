@@ -1,6 +1,7 @@
 package com.izum286.carservice.model.entity;
 
 import com.izum286.carservice.model.dto.FeatureDTO;
+
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -36,7 +37,7 @@ public class FullCarEntity {
     private String placeId;
     private double[] pickUpPlace;
     private List<String> imageUrl;
-    private boolean isDeleted; //TODO check logic
+    private boolean isDeleted;
     private double pricePerDaySimple;
     private OwnerEntity owner;
     private List<BookedPeriodEntity> bookedPeriods;

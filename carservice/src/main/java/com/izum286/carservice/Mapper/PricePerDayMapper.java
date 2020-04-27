@@ -1,5 +1,7 @@
 package com.izum286.carservice.Mapper;
 
+import com.izum286.carservice.model.dto.PricePerDayDto;
+import com.izum286.carservice.model.entity.PricePerDayEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

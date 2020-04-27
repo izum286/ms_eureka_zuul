@@ -16,12 +16,6 @@ public class CarController {
     @Autowired
     CarService carService;
 
-    @Autowired
-    UserService userService;
-
-
-
-
     @PostMapping("car")
     public FullCarDTOResponse addCar(@RequestBody AddUpdateCarDtoRequest carDTO, Principal principal) {
         String userEmail = principal.getName();

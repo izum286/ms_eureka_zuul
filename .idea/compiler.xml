@@ -19,7 +19,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="carservice" target="1.8" />
+      <module name="carservice" target="10" />
       <module name="config" target="1.8" />
       <module name="filterservice" target="11" />
       <module name="gateway_zuul" target="1.8" />
